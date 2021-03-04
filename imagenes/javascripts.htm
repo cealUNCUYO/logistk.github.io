@@ -1,0 +1,192 @@
+//Search Related Scripts--------------------------------------------------------------------//
+
+	String.prototype.ltrim = function () {
+		return this.replace(/^\s*/, "");
+	}
+		
+	String.prototype.rtrim = function () {
+		return this.replace(/\s*$/, "");
+	} 
+		
+	String.prototype.trim  = function () {
+		return this.ltrim().rtrim(); 
+	}
+
+	function ValidateFormSubmit2() {
+		document.frmSearch2.qt.value = document.frmSearch2.qt.value.trim();
+
+		if (document.frmSearch2.qt.value == '') {
+			alert('Please enter search text.');
+			return false;
+		}
+		else {
+			document.frmSearch2.action = '/search/search_results.asp';
+			document.frmSearch2.target = '_top';
+			document.frmSearch2.submit();
+		}
+	}
+	
+	
+	function SetFocus() {
+		document.frmSearch2.qt.focus();
+	}
+
+//Popup Script-------------------------------------------------------------------------------//
+	var OpenStr;
+	function popNewWindow(PopURL,PopHeight,PopWidth,ScrollBar)
+		{
+			if (OpenStr && OpenStr.open && !OpenStr.closed) 
+				{ OpenStr.close(); }
+	        modalX = (screen.width-PopWidth) / 2
+	        modalY = (screen.height-PopHeight) / 2
+
+	        //Open New Window
+	        var WinPlace = '"resizable=yes,scrollbars=' + ScrollBar + ',height=' + PopHeight + ',width=' + PopWidth + ',screenx=' + modalX + ',screenY=' + modalY + ',left=' + modalX + ',top=' + modalY + '"'
+			OpenStr = window.open(PopURL, "SMSPopup", WinPlace)
+        	OpenStr.focus()
+	    }  
+
+		
+	function popUnderWindow(PopURL,PopHeight,PopWidth,ScrollBar)
+		{
+	        modalX = (screen.width-PopWidth) / 2
+	        modalY = (screen.height-PopHeight) / 2
+
+	        //Open New Window
+	        var WinPlace = '"resizable=yes,scrollbars=' + ScrollBar + ',height=' + PopHeight + ',width=' + PopWidth + ',screenx=' + modalX + ',screenY=' + modalY + ',left=' + modalX + ',top=' + modalY + '"'
+			var OpenStr = window.open(PopURL, "SMSPopunder", WinPlace)
+        	window.focus();
+	    }  
+
+	function jumpto(address)
+		{
+		document.location=address
+		window.focus();
+		}
+
+	var onsofo = true
+		
+//Image swap script and preloader------------------------------------------------------------//
+	//Best used with the RollOverLink function in sharedfunctions.asp
+	var myimages=new Array()
+	function preloadimages(){
+		for (i=0;i<preloadimages.arguments.length;i++){
+		myimages[i]=new Image()
+		myimages[i].src=preloadimages.arguments[i]
+		}
+	}
+	
+	function changeImage(btn, img)
+	    {
+	        var objBtn = eval("document." + btn);
+	        objBtn.src = img;
+	    }
+
+	function changeButton(btn, img)
+	//Same as above, but for use with 'this' in <input> images
+	    {
+			img.src = btn
+	    }
+
+//Navigation Script-------------------------------------------------------------------------//
+
+	var currentParent;
+	var currentMenu;
+	var menuToHide;
+	var fadestep;
+	var cleared = true;
+	var browserdetect;
+	
+	
+	function Pos(thisitem)
+	{
+		if(typeof(thisitem) != 'object') {thisitem = document.getElementById(thisitem);}
+		var ww = thisitem.offsetWidth, hh = thisitem.offsetHeight;
+		for (var xx = 0,yy = 0; thisitem != null; xx += thisitem.offsetLeft,yy += thisitem.offsetTop,thisitem = thisitem.offsetParent);
+		return {Left:xx, Top:yy, Right:xx + ww, Bottom:yy + hh}
+	}
+	
+	
+	function ShowMenu(thisitem, menu)
+	{
+		cleared = false
+		currentParent = thisitem;
+		if(typeof(menu) != 'object')
+			{menu = document.getElementById(menu);}
+		if(currentMenu == menu)
+			{
+				if (!cleared) clearInterval(fadestep);
+				currentMenu = null;
+			}
+		else if(currentMenu != null)
+			{
+				InstantHide(currentMenu);
+				if (!cleared) clearInterval(fadestep);
+				currentMenu = null;
+			}
+		currentMenu = menu;
+		browserdetect=menu.filters? "ie" : typeof(menu.style.MozOpacity) == "string" ? "mz" : ""
+		if (browserdetect == "ie")
+			{currentMenu.filters.alpha.opacity = 100}
+		else if (browserdetect == "mz")
+			{currentMenu.style.MozOpacity = 1}
+		currentMenu.style.left = Pos(currentParent).Left;
+		currentMenu.style.top = Pos(currentParent).Bottom;
+		currentMenu.style.visibility = 'visible';
+	}
+	
+	
+	function HoldMenu()
+	{
+		ShowMenu(currentParent, currentMenu);
+	}
+	
+	
+	function HideMenu(hideMenu)
+	{
+		if(typeof(hideMenu) != 'object')
+			{hideMenu = document.getElementById(hideMenu);}
+		if(menuToHide != hideMenu && menuToHide != null)
+			{InstantHide(menuToHide);}
+		menuToHide = hideMenu;
+		FadeMenu();
+	}
+	
+	function FadeMenu()
+	{
+		fadestep=setInterval("FadeLevel()",25)
+	}
+	
+	function FadeLevel()
+	{
+		if (browserdetect == "ie")
+			{menuToHide.filters.alpha.opacity-=10}
+		else if (browserdetect == "mz")
+			{menuToHide.style.MozOpacity-=.1}
+		else
+			{menuToHide.style.visibility = 'hidden';}
+			
+		if ((menuToHide.style.MozOpacity == 0.0)||(menuToHide.filters.alpha.opacity == 0))
+			{
+				InstantHide(menuToHide);
+				menuToHide = null;
+			}
+	}
+	
+	function InstantHide(iHideMenu) {
+		clearInterval(fadestep);
+		cleared=true
+		iHideMenu.style.visibility = 'hidden';
+	}
+		
+		
+	
+	
+	function msdelay(mseconds) { //delay by the input milliseconds
+		starttime = new Date()
+		while (1) {
+			nowtime = new Date()
+			diff = nowtime-starttime
+			if( diff > mseconds ) {break;}
+		}
+	}
